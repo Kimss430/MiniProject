@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/common.js"></script>
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <h1>로그인</h1>
+    <div class="container">
+        <div id="app">
+            <form id="loginForm">
+                <label for="userId">아이디:</label>
+                <input id="userId" type="text" placeholder="아이디" v-model="user.id">
+                <label for="password">비밀번호:</label>
+                <input id="password" type="password" placeholder="비밀번호" v-model="user.pwd">
+                <button type="button" @click="fnLogin">로그인</button>
+            </form>
+            <p id="loginMessage" class="errorMessage">{{ message }}</p>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: {
+                        id: "",
+                        pwd: ""
+                    },
+                    isLoggedIn: false,
+                    message: ""
+                };
+            },
+            mounted() {
+                this.checkLoginStatus();
+            },
+            methods: {
+
+                async fnLogin() {
+                    try {
+                        const response = await $.ajax({
+                            url: "http://localhost:3000/login",
+                            dataType: "json",
+                            type: "POST",
+                            data: JSON.stringify(this.user),
+                            contentType: "application/json",
+                            xhrFields: {
+                                withCredentials: true // 쿠키와 세션 정보를 서버에 전송
+                            },
+                            crossDomain: true // 다른 도메인 간의 요청을 허용
+                        });
+
+                        console.log(response);
+
+                        if (response.ROLE === 'ADMIN') {
+                            alert("관리자 로그인 성공");
+                            sessionStorage.setItem("isLoggedIn", true);
+                            sessionStorage.setItem("userId", response.USERID);
+                            sessionStorage.setItem("username", response.USERNAME);
+                            sessionStorage.setItem("role", response.ROLE);
+
+                            // 관리자용 페이지로 이동
+                            window.location.href = "index.html";
+                        } else if (response.ROLE === 'USER') {
+                            alert("사용자 로그인 성공");
+                            sessionStorage.setItem("isLoggedIn", true);
+                            sessionStorage.setItem("userId", response.USERID);
+                            sessionStorage.setItem("username", response.USERNAME);
+                            sessionStorage.setItem("role", response.ROLE);
+
+                            // 사용자용 페이지로 이동
+                            window.location.href = "index.html";
+                        } else {
+                            alert("로그인 실패");
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.message = "로그인 중 오류가 발생했습니다.";
+                    }
+                },
+                logout() {
+                    // 로그아웃 처리
+                    $.ajax({
+                        url: "http://localhost:3000/logout",
+                        type: "GET",
+                        success: () => {
+                            this.isLoggedIn = false;
+                            sessionStorage.removeItem("isLoggedIn"); // 세션스토리지에서 로그인 상태 제거
+                            alert("로그아웃되었습니다.");
+                            window.location.href = "login.html";
+                        },
+                        error: (error) => {
+                            console.error('Error:', error);
+                            this.message = "로그아웃 중 오류가 발생했습니다.";
+                        }
+                    });
+                },
+                checkLoginStatus() {
+                    // 세션스토리지에 저장된 로그인 상태 확인
+                    this.isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 관리</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+    <div id="header"></div>
+    
+    <div id="app">
+        <h2>주문 목록</h2>
+        <input placeholder="검색어" v-model="keyword" @keyup.enter="fnGetList">
+        <button @click="fnGetList">검색</button>
+        <table>
+            <tr>
+                <th>주문 번호</th>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>가격</th>
+                <th>상태</th>
+            </tr>
+            <tr v-for="(item, index) in list">
+                <td>{{item.ORDER_ID}}</td>
+                <td>{{item.PRODUCT_NAME}}</td>
+                <td>{{item.QUANTITY}}</td>
+                <td>{{item.PRICE}}</td>
+                <td>
+                    <select v-model="item.STATUS" @change="fnUpdateStatus(item.ORDER_ID, item.STATUS)">
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    list: [],
+                    keyword: ""
+                };
+            },
+            methods: {
+                fnGetList() {
+                    var self = this;
+                    var url = `http://localhost:3000/orders?keyword=${self.keyword}`;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "GET",
+                        success: function (data) {
+                            self.list = data;
+                        }
+                    });
+                },
+                fnUpdateStatus(orderId, status) {
+                    var url = `http://localhost:3000/updateOrder?orderId=${orderId}&status=${status}`;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "POST",
+                        success: function (data) {
+                            alert('Order status updated');
+                        }
+                    });
+                }
+            },
+            mounted() {
+                this.fnGetList();
+            }
+        });
+        app.mount('#app');
+    </script>
+</body>
+</html>
+<script>
+    $(document).ready(function(){
+        // header.html과 footer.html을 각각의 div에 불러오기
+        $('#header').load('header.html');
+        $('#footer').load('footer.html');
+    });
+</script>
+<div id="footer"></div>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 정보</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<style>
+/* 기본 리셋과 전역 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#header, #footer {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+#app {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+input[type="text"], 
+input[type="email"], 
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+a {
+    text-decoration: none;
+    color: #4CAF50;
+    font-size: 16px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+</style>
+<body>
+    <div id="header"></div>
+    <div id="app">
+        <h1>사용자 정보</h1>
+        <form @submit.prevent="fnUpdate">
+            <div>
+                <label for="username">이름:</label>
+                <input type="text" id="username" v-model="user.USERNAME" required>
+            </div>
+            <div>
+                <label for="email">이메일:</label>
+                <input type="email" id="email" v-model="user.EMAIL" required>
+            </div>
+            <div>
+                <label for="phone">전화번호:</label>
+                <input type="text" id="phone" v-model="user.PHONE_NUMBER" required>
+            </div>
+            <div>
+                <label for="gender">성별:</label>
+                <select id="gender" v-model="user.GENDER" required>
+                    <option value="M">남자</option>
+                    <option value="F">여자</option>
+                </select>
+            </div>
+            <button type="submit">수정</button>
+            <a href="javascript:history.back()">뒤로가기</a>
+        </form>
+    </div>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: {
+                        USER_ID: '',
+                        USERNAME: '',
+                        EMAIL: '',
+                        PHONE_NUMBER: '',
+                        GENDER: ''
+                    }
+                };
+            },
+            methods: {
+                async fetchUserInfo() {
+                    const id = new URLSearchParams(window.location.search).get('id');
+                    const response = await fetch(`http://localhost:3000/user?id=${id}`);
+                    const data = await response.json();
+                    this.user = data[0];
+                },
+                async fnUpdate() {
+                    const response = await fetch(`http://localhost:3000/update`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.user)
+                    });
+                    const result = await response.json();
+                    alert(result.message);
+                    window.location.href = "userlist.html";
+                }
+            },
+            mounted() {
+                this.fetchUserInfo();
+            }
+        });
+        app.mount('#app');
+    </script>
+    <div id="footer"></div>
+    <script>
+        $(document).ready(function(){
+            // header.html과 footer.html을 각각의 div에 불러오기
+            $('#header').load('header.html');
+            $('#footer').load('footer.html');
+        });
+    </script>
+</body>
+</html>

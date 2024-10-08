@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        #app {
+            margin: 100px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 500px;
+            max-width: 100%;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #555555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 95%;
+            padding: 12px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333333;
+            box-sizing: border-box;
+        }
+
+        .gender-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <!-- <script>
+        function loadHTML(id, file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHTML('header', 'header.html');
+            loadHTML('footer', 'footer.html');
+        });
+    </script> -->
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <!-- USERID(아이디, PK), PWD(비밀번호), USERNAME(이름), EMAIL(메일), 
+    PHONE(전화번호), GENDER(성별) 컬럼을 가지는 테이블 생성(모든 컬럼은 NOT NULL) -->
+
+    <div id="app">
+        <h1>회원가입</h1>
+        <div class="form-group">
+            <label>아이디
+                <input v-if="!isCheck" type="text" v-model="info.user_id">
+                <input v-else type="text" v-model="info.user_id" disabled>
+            </label>
+            <button @click="fnIdCheck">중복체크</button>
+        </div>
+        <div class="form-group">
+            <label>비밀번호<input type="password" v-model="info.pwd"></label>
+        </div>
+        <div class="form-group">
+            <label>비밀번호확인<input type="password" v-model="info.pwdChack"></label>
+        </div>
+        <div class="form-group">
+            <label>이름<input type="text" v-model="info.userName"></label>
+        </div>
+        <div class="form-group">
+            <label>메일<input type="text" v-model="info.email"></label>
+        </div>
+
+        <div class="form-group">
+            <label>전화번호<input type="text" v-model="info.phone_number"></label>
+        </div>
+
+        <div class="address-section">
+            <div class="form-group">
+                <label>기본 주소<input type="text" v-model="info.address" readonly>
+                    <button @click="openAddressSearch">주소 검색</button></label>
+            </div>
+            <div class="form-group">
+                <label>상세 주소<input type="text" v-model="info.addressDetail"></label>
+            </div>
+        </div>
+
+        <div class="gender-group">
+            <label><input type="radio" value="M" v-model="info.gender">남자</label>
+            <label><input type="radio" value="F" v-model="info.gender">여자</label>
+        </div>
+
+
+        <button class="btn" @click="fnSubmit">회원가입</button>
+    </div>
+    <div id="footer"></div>
+</body>
+
+</html>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                isCheck: false,
+                info: {
+
+                    user_id: "",
+                    pwd: "",
+                    pwdChack: "",
+                    userName: "",
+                    email: "",
+                    phone_number: "",
+                    address: "",
+                    addressDetail: "",
+                    gender: "",
+
+
+                }
+            };
+        },
+        methods: {
+            fnIdCheck() {
+
+                var self = this;
+                if (self.info.user_id.length < 5) {
+                    alert("아이디는 5글자이상");
+                    return;
+                }
+
+
+                $.ajax({
+                    url: "http://localhost:3000/IDcheck",
+                    dataType: "json",
+                    type: "POST",
+                    data: JSON.stringify(self.info), // json 형태로 바꿔
+                    contentType: "application/json",
+                    success: function (data) {
+                        console.log(data);
+                        if (data[0].CNT == 0) {
+                            alert("사용가능");
+                        } else {
+                            alert("아이디를 다시 확인바람");
+                        };
+                    }
+                });
+            },
+            fnSubmit() {
+                
+                var self = this;
+                console.log(self.info);
+                if (self.info.pwd.length < 6) {
+                    alert("패스워드 6글자이상!")
+                    return;
+                }
+                else if (self.info.pwd !== self.info.pwdChack) {
+                    alert("비밀번호가 서로 다릅니다.")
+                    return;
+                }
+
+                if (!self.info.user_id || !self.info.pwd || !self.info.pwdChack ||
+                    !self.info.userName || !self.info.email || !self.info.phone_number || !self.info.address || !self.info.addressDetail || !self.info.gender) {
+                    alert("모든 필드를 입력해 주세요.");
+                    return;
+                }
+
+                $.ajax({
+                    url: "http://localhost:3000/insert",
+                    dataType: "json",
+                    type: "POST",
+                    data: JSON.stringify(self.info),
+                    contentType: "application/json",
+                    success: function (data) {
+                        alert(data[0].message);
+                        window.location.href = "login.html";
+                    },
+                    error: function (xhr, status, error) {
+                        // console.error("AJAX Error:", status, error);
+                        alert("회원가입 실패. 관리자에게 문의해 주세요.");
+                    }
+                });
+                console.log(self.info)
+            },
+            openAddressSearch() {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        // 주소 입력란에 값 설정
+                        this.info.address = data.address; // 기본 주소
+                        this.info.addressDetail = ""; // 상세 주소 초기화
+                    }.bind(this) // Vue 인스턴스의 this 바인딩
+                }).open();
+            }
+        },
+        mounted() {
+
+        }
+    });
+    app.mount('#app');
+</script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

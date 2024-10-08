@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A 관리</title>
+    <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+    <div id="header"></div>
+    
+    <div id="app">
+        <h2>Q&A 목록</h2>
+        <input placeholder="검색어" v-model="keyword" @keyup.enter="fnGetList">
+        <button @click="fnGetList">검색</button>
+        <table>
+            <tr>
+                <th>질문 ID</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>상태</th>
+            </tr>
+            <tr v-for="(item, index) in list">
+                <td>{{item.QA_ID}}</td>
+                <td><a href="javascript:;" @click="fnViewQA(item.QA_ID)">{{item.TITLE}}</a></td>
+                <td>{{item.AUTHOR}}</td>
+                <td>{{item.STATUS}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    list: [],
+                    keyword: ""
+                };
+            },
+            methods: {
+                fnGetList() {
+                    var self = this;
+                    var url = `http://localhost:3000/qa?keyword=${self.keyword}`;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "GET",
+                        success: function (data) {
+                            self.list = data;
+                        }
+                    });
+                },
+                fnViewQA(qaId) {
+                    location.href = `qaDetail.html?qaId=${qaId}`;
+                }
+            },
+            mounted() {
+                this.fnGetList();
+            }
+        });
+        app.mount('#app');
+    </script>
+</body>
+</html>
+<script>
+    $(document).ready(function(){
+        // header.html과 footer.html을 각각의 div에 불러오기
+        $('#header').load('header.html');
+        $('#footer').load('footer.html');
+    });
+</script>
+<div id="footer"></div>

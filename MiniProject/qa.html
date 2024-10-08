@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/common.js"></script>
+    <!-- <script>
+        function loadHTML(id, file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHTML('header', 'header.html');
+            loadHTML('footer', 'footer.html');
+        });
+    </script> -->
+</head>
+<body>
+    <div id="header"></div>
+
+    
+    <h1>Q&A</h1>
+    <form id="qaForm" class="container">
+        <label for="inquiryType">문의 유형 :</label>
+        <select id="inquiryType" name="inquiryType">
+            <option value="menu">메뉴 관련</option>
+            <option value="delivery">배달 관련</option>
+            <option value="other">기타</option>
+        </select><br>
+        <label for="name">이름 :</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        <label for="phoneNumber">핸드폰 번호:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber"><br>
+        <label for="message">내용:</label>
+        <textarea id="message" name="message" rows="5" required></textarea><br>
+        <button type="button" onclick="submitInquiry()">문의하기</button>
+    </form>
+    <p id="inquiryMessage"></p>
+    <script>
+        function submitInquiry() {
+            const inquiryType = document.getElementById('inquiryType').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const message = document.getElementById('message').value;
+            
+            // AJAX request to submit inquiry
+            fetch('InquiryServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `inquiryType=${inquiryType}&name=${name}&email=${email}&phoneNumber=${phoneNumber}&message=${message}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('inquiryMessage').innerText = '문의가 성공적으로 제출되었습니다.';
+            });
+        }
+        </script>
+        <div id="footer"></div>
+</body>
+</html>

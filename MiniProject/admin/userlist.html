@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유저 리스트</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<style>
+
+/* 전역 스타일 및 기본 리셋 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f9;
+}
+
+#header, #footer {
+    background-color: #343a40;
+    color: #fff;
+    padding: 15px 0;
+    text-align: center;
+}
+
+#header {
+    border-bottom: 2px solid #495057;
+}
+
+#footer {
+    border-top: 2px solid #495057;
+    margin-top: 20px;
+}
+
+#app {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"], 
+input[type="email"], 
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: bold;
+}
+
+table td {
+    background-color: #fff;
+    color: #495057;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+label {
+    display: block;
+    font-weight: normal;
+    margin-bottom: 5px;
+    color: #495057;
+}
+</style>
+<body>
+    <div id="header"></div>
+    
+    <div id="app">
+        <input placeholder="검색어" v-model="keyword" @keyup.enter="fnGetList">
+        <!-- <select v-model="gender" @change="fnGetList">
+            <option value="">::성별::</option>
+            <option value="M">남자</option>
+            <option value="F">여자</option>
+        </select> -->
+        <button @click="fnGetList">검색</button>
+        <div style="margin-top : 20px;"></div>
+        <select class="op" v-model="orderName" @change="fnGetList">
+            <option value="USERNAME">이름</option>
+            <option value="USER_ID">아이디</option>
+            <!-- <option value="PHONE_NUMBER">전화번호</option> -->
+        </select>
+        <label><input type="radio" @change="fnGetList" v-model="orderKind" name="order" value="ASC">오름차순</label>
+        <label><input type="radio" @change="fnGetList" v-model="orderKind" name="order" value="DESC">내림차순</label>
+        <table>
+            <tr>
+                <th>선택</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>메일</th>
+                <th>전화번호</th>
+                <th>성별</th>
+            </tr>
+            <tr v-for="(item, index) in list" :key="index">
+                <td><input type="radio" :id="'user-' + index" name="userKey" :value="item.USER_ID" v-model="selectItem"></td>
+                <td><label :for="'user-' + index">{{item.USER_ID}}</label></td>
+                <td><a href="javascript:;" @click="fnInfo(item.USER_ID)">{{item.USERNAME}}</a></td>
+                <td>{{item.EMAIL}}</td>
+                <td>{{item.PHONE_NUMBER}}</td>
+                <td>
+                    <span v-if="item.GENDER == 'M'">남자</span>
+                    <span v-else>여자</span>
+                </td>
+            </tr>
+        </table>
+        <!-- <button @click="fnSave" class="btn">저장</button> -->
+        <button @click="fnRemove" class="btn">삭제</button>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    list: [],
+                    keyword: "",
+                    phone: "",
+                    gender: "",
+                    selectItem: "",
+                    orderName: "USERNAME",
+                    orderKind: "ASC"
+                };
+            },
+            methods: {
+                fnGetList() {
+                    var self = this;
+                    var url = `http://localhost:3000/list?keyword=${self.keyword}&phone=${self.phone}&gender=${self.gender}&orderName=${self.orderName}&orderKind=${self.orderKind}`;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            self.list = data;
+                            console.log(data);
+                        }
+                    });
+                },
+                fnUpdate(id) {
+                    this.updateId = id;
+                },
+                fnRemove() {
+                    var self = this;
+                    if (!confirm("정말 삭제하시겠습니까?")) {
+                        return;
+                    }
+                    var url = `http://localhost:3000/delete?id=${self.selectItem}`;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            alert(data[0].message);
+                            self.fnGetList();
+                        }
+                    });
+                },
+                fnSave(item) {
+                    if (!confirm("저장 하시겠습니까?")) {
+                        return;
+                    }
+                    var self = this;
+                    var url = `http://localhost:3000/update?id=${item.USER_ID}&name=${item.USERNAME}&phone=${item.PHONE_NUMBER}&gender=${item.GENDER}&email=${item.EMAIL}`;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            alert(data[0].message);
+                            self.updateId = "";
+                            self.fnGetList();
+                        }
+                    });
+                },
+                fnInfo(id) {
+                    location.href = `info.html?id=${id}`;
+                }
+            },
+            mounted() {
+                // 처음 화면이 실행될 때 호출할 부분
+                this.fnGetList();
+            }
+        });
+        app.mount('#app');
+    </script>
+</body>
+<script>
+    $(document).ready(function(){
+        // header.html과 footer.html을 각각의 div에 불러오기
+        $('#header').load('header.html');
+        $('#footer').load('footer.html');
+    });
+</script>
+<div id="footer"></div>
+</html>

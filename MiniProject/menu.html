@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/common.js"></script>
+    <style>
+        /* Top 버튼 스타일 */
+        #scrollToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 15px 20px; /* 버튼의 패딩을 증가시켜 크기 조정 */
+            font-size: 20px; /* 글자 크기를 증가시켜 버튼 크기 조정 */
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            display: none; /* Initially hidden */
+            transition: opacity 0.3s, transform 0.3s;
+            width: 60px; /* 버튼의 너비 */
+            height: 60px; /* 버튼의 높이 */
+            line-height: 1.5; /* 버튼 텍스트의 줄 높이 조정 */
+        }
+
+        #scrollToTop:hover {
+            background-color: #e55347;
+            transform: scale(1.1);
+        }
+        /* Reset and basic styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #ff6347;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            background-color: #ff6347;
+            color: #fff;
+        }
+
+        .menu-section {
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .menu-section img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .menu-section p {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        #footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #777;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header"></header>
+
+    <main>
+        <h1>Our Menu</h1>
+
+        <nav>
+            <ul>
+                <li><a href="#steak">Steak</a></li>
+                <li><a href="#pizza">Pizza</a></li>
+                <li><a href="#pasta">Pasta</a></li>
+                <li><a href="#salad">Salad</a></li>
+                <li><a href="#wine">Wine</a></li>
+            </ul>
+        </nav>
+
+        <section id="steak" class="menu-section">
+            <h2>Steak</h2>
+            <img src="../MiniProject/images/뉴욕스테이크.jpg" alt="뉴욕스테이크">
+            <p>두툼한 뉴욕 스타일 스테이크 - $25.99</p>
+            <button @click="addToCart('뉴욕스테이크', 25.99)">장바구니 담기</button>
+        </section>
+
+        <section id="pizza" class="menu-section">
+            <h2>Pizza</h2>
+            <img src="../MiniProject/images/마르게리타피자.jpg" alt="마르게리타피자">
+            <p>신선한 토마토와 모짜렐라 치즈 피자 - $12.49</p>
+            <button @click="addToCart('마르게리타피자', 12.49)">장바구니 담기</button>
+        </section>
+
+        <section id="pasta" class="menu-section">
+            <h2>Pasta</h2>
+            <img src="../MiniProject/images/감베리오일파스타.jpg" alt="감베리오일파스타">
+            <p>해산물과 오일이 가득한 파스타 - $15.99</p>
+            <button @click="addToCart('감베리오일파스타', 15.99)">장바구니 담기</button>
+        </section>
+
+        <section id="salad" class="menu-section">
+            <h2>Salad</h2>
+            <img src="../MiniProject/images/연어리스셀러드.jpg" alt="연어리스셀러드">
+            <p>연어와 신선한 채소가 가득한 샐러드 - $13.49</p>
+            <button @click="addToCart('연어리스셀러드', 13.49)">장바구니 담기</button>
+        </section>
+
+        <section id="wine" class="menu-section">
+            <h2>Wine</h2>
+            <img src="../MiniProject/images/진레드와인.jpg" alt="진레드와인">
+            <p>풍부한 맛의 진 레드 와인 - $22.99</p>
+            <button @click="addToCart('진레드와인', 22.99)">장바구니 담기</button>
+        </section>
+    </main>
+
+    <footer id="footer"></footer>
+
+    <button id="scrollToTop" title="Go to Top">Top</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    isLoggedIn: sessionStorage.getItem('isLoggedIn') === 'true',
+                    userId: sessionStorage.getItem('userId'),
+                    cart: JSON.parse(sessionStorage.getItem('cart')) || []
+                };
+            },
+            computed: {
+                cartTotal() {
+                    return this.cart.reduce((total, item) => total + item.price * item.quantity, 0);
+                }
+            },
+            methods: {
+                addToCart(itemName, itemPrice) {
+                    if (!this.isLoggedIn) {
+                        alert('장바구니에 상품을 추가하려면 로그인이 필요합니다.');
+                        return;
+                    }
+
+                    let existingItem = this.cart.find(item => item.name === itemName);
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                    } else {
+                        this.cart.push({ name: itemName, price: itemPrice, quantity: 1 });
+                    }
+                    this.saveCart();
+                    alert(`${itemName} 장바구니에 추가되었습니다.`);
+                },
+                saveCart() {
+                    sessionStorage.setItem('cart', JSON.stringify(this.cart));
+                },
+                clearCart() {
+                    this.cart = [];
+                    this.saveCart();
+                },
+                checkout() {
+                    if (!this.isLoggedIn) {
+                        alert('결제를 진행하시려면 로그인이 필요합니다.');
+                        return;
+                    }
+                    alert('Checkout 기능은 아직 구현되지 않았습니다.');
+                }
+            }
+        }).mount('body');
+
+        // Scroll to Top Button
+        document.addEventListener('scroll', function () {
+            const scrollToTopButton = document.getElementById('scrollToTop');
+            if (window.scrollY > 200) { // Show button after scrolling down 200px
+                scrollToTopButton.style.display = 'block';
+            } else {
+                scrollToTopButton.style.display = 'none';
+            }
+        });
+
+        document.getElementById('scrollToTop').addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+
+</html>

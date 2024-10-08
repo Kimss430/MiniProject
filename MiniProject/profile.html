@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 수정</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        #app {
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 500px;
+            max-width: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #555555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333333;
+            box-sizing: border-box;
+        }
+
+        .gender-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .gender-group label {
+            margin-right: 20px;
+            font-size: 16px;
+            color: #555555;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .address-section {
+            margin-bottom: 20px;
+        }
+
+        .address-section button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .address-section button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #d9534f;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <main>
+        <div id="app">
+            <h1>프로필 수정</h1>
+            <form @submit.prevent="updateProfile">
+                <div class="form-group">
+                    <label for="userId">아이디:</label>
+                    <input id="userId" v-model="user.userId" disabled />
+                </div>
+
+                <div class="form-group">
+                    <label for="pwd">비밀번호:</label>
+                    <input id="pwd" type="password" v-model="user.pwd" />
+                </div>
+
+                <div class="form-group">
+                    <label for="pwdChack">비밀번호 확인:</label>
+                    <input id="pwdChack" type="password" v-model="user.pwdChack" />
+                </div>
+
+                <div class="form-group">
+                    <label for="userName">이름:</label>
+                    <input id="userName" v-model="user.userName" />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">이메일:</label>
+                    <input id="email" type="email" v-model="user.email" />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_number">전화번호:</label>
+                    <input id="phone_number" v-model="user.phone_number" />
+                </div>
+
+                <div class="address-section">
+                    <div class="form-group">
+                        <label for="address">주소:</label>
+                        <input id="address" v-model="user.address" readonly />
+                        <button type="button" @click="openAddressSearch">주소 검색</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressDetail">상세 주소:</label>
+                        <input id="addressDetail" v-model="user.addressDetail" />
+                    </div>
+                </div>
+
+                <div class="form-group gender-group">
+                    <label><input type="radio" value="M" v-model="user.gender">남성</label>
+                    <label><input type="radio" value="F" v-model="user.gender">여성</label>
+                </div>
+
+                <button type="submit" class="btn">저장</button>
+            </form>
+
+            <p v-if="message" class="message">{{ message }}</p>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    user: {
+                        userId: "",
+                        pwd: "",
+                        pwdChack: "",
+                        userName: "",
+                        email: "",
+                        phone_number: "",
+                        address: "",
+                        addressDetail: "",
+                        gender: ""
+                    },
+                    message: ""
+                };
+            },
+            mounted() {
+                this.loadUserProfile();
+            },
+            methods: {
+                async loadUserProfile() {
+                    try {
+                        const userId = sessionStorage.getItem("userId");
+                        console.log("sessionStorage userId:", userId);
+                        if (!userId) {
+                            alert("세션에서 사용자 ID를 찾을 수 없습니다.");
+                            return;
+                        }
+                        const response = await $.ajax({
+                            url: `http://localhost:3000/profile?userId=${userId}`,
+                            type: "GET",
+                            xhrFields: {
+                                withCredentials: true
+                            }
+                        });
+                        this.user = response;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert("프로필을 로드하는 중 오류가 발생했습니다.");
+                    }
+                },
+                async updateProfile() {
+                    try {
+                        if (this.user.pwd !== this.user.pwdChack) {
+                            alert("비밀번호가 일치하지 않습니다.");
+                            return;
+                        }
+                        if (this.user.pwd.length < 6) {
+                            alert("비밀번호는 6자 이상이어야 합니다.");
+                            return;
+                        }
+
+                        const response = await $.ajax({
+                            url: "http://localhost:3000/updateProfile",
+                            type: "POST",
+                            data: JSON.stringify(this.user),
+                            contentType: "application/json",
+                            xhrFields: {
+                                withCredentials: true
+                            }
+                        });
+
+                        if (response.success) {
+                            alert("프로필이 성공적으로 업데이트되었습니다.")
+                            window.location.href = "index.html";
+                            // alert("프로필이 성공적으로 업데이트되었습니다.";
+                        } else {
+                            alert("프로필 업데이트에 실패했습니다.");
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert("모든 값을 입력 해주세요.");
+                    }
+                },
+                openAddressSearch() {
+                    new daum.Postcode({
+                        oncomplete: (data) => {
+                            this.user.address = data.address; // 기본 주소
+                            this.user.addressDetail = ""; // 상세 주소 초기화
+                        }
+                    }).open();
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</body>
+
+</html>

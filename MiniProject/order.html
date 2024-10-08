@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/common.js"></script>
+    <!-- <script>
+        function loadHTML(id, file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHTML('header', 'header.html');
+            loadHTML('footer', 'footer.html');
+        });
+    </script> -->
+</head>
+<body>
+    <div id="header"></div>
+
+    <h1>온라인 예약</h1>
+    <h2>포장 예약</h2>
+    <form id="takeoutForm" class="container">
+        <label for="takeoutMenu">메뉴:</label>
+        <select id="takeoutMenu" name="takeoutMenu">
+            <!-- Options for menu items -->
+        </select><br>
+        <label for="takeoutTime">방문 시간:</label>
+        <input type="time" id="takeoutTime" name="takeoutTime" required><br>
+        <label for="phoneNumber">핸드폰 번호:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required><br>
+        <button type="button" onclick="placeTakeoutOrder()">테이크아웃 주문하기</button>
+    </form>
+    
+    <h2>배달 주문</h2>
+    <form id="deliveryForm" class="container">
+        <label for="deliveryMenu">메뉴:</label>
+        <select id="deliveryMenu" name="deliveryMenu">
+            <!-- Options for menu items -->
+        </select><br>
+        <label for="deliveryAddress">배달받을 주소:</label>
+        <input type="text" id="deliveryAddress" name="deliveryAddress" required><br>
+        <button type="button" onclick="placeDeliveryOrder()">배달 주문하기</button>
+    </form>
+    
+    <div id="footer"></div>
+    <script>
+        function placeTakeoutOrder() {
+            // Logic for placing a takeout order
+        }
+        
+        function placeDeliveryOrder() {
+            // Logic for placing a delivery order
+        }
+        </script>
+</body>
+</html>
+

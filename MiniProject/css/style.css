@@ -1,0 +1,215 @@
+/* Reset box-sizing and margins */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* General Body Styles */
+body {
+    padding: 20px;
+    background-color: #f4f4f4;
+    /* 배경색 */
+    color: #333;
+    /* 기본 텍스트 색상 */
+    font-size: 16px;
+    /* 기본 폰트 크기 */
+}
+
+/* Heading Styles */
+h1 {
+    color: #333;
+    /* 제목 색상 */
+    margin-bottom: 20px;
+    /* 제목 아래 여백 */
+    text-align: center;
+    /* 제목 중앙 정렬 */
+}
+
+h2 {
+    color: #555;
+    /* 부제목 색상 */
+    margin-bottom: 15px;
+    /* 부제목 아래 여백 */
+    text-align: center;
+    /* 부제목 중앙 정렬 */
+}
+
+/* Navigation Styles */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #007bff;
+    /* 링크 기본 색상 */
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    /* 링크 배경색 */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav a:hover {
+    background-color: #007bff;
+    /* 호버 시 배경색 */
+    color: #fff;
+    /* 호버 시 텍스트 색상 */
+}
+
+/* Container Styles */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    /* 컨테이너 배경색 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* 그림자 효과 */
+    border-radius: 8px;
+    /* 테두리 둥글게 */
+    margin-bottom: 20px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    font-weight: bold;
+    /* 레이블 글씨 굵게 */
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    /* 입력 필드 테두리 색상 */
+    border-radius: 4px;
+    /* 입력 필드 테두리 둥글게 */
+}
+
+button {
+    background-color: #28a745;
+    /* 버튼 배경색 */
+    color: #fff;
+    /* 버튼 텍스트 색상 */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+    /* 호버 시 버튼 배경색 */
+    transform: scale(1.05);
+    /* 호버 시 버튼 크기 확대 */
+}
+
+/* Message Styles */
+.errorMessage {
+    color: #dc3545;
+    /* 에러 메시지 색상 */
+    text-align: center;
+}
+
+.successMessage {
+    color: #28a745;
+    /* 성공 메시지 색상 */
+    text-align: center;
+}
+
+/* Home Button Styles */
+a.home-button {
+    text-decoration: none;
+    color: #fff;
+    /* 홈 버튼 텍스트 색상 */
+    background-color: #007bff;
+    /* 홈 버튼 배경색 */
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+    transition: background-color 0.3s, transform 0.3s;
+    text-align: center;
+    display: inline-block;
+}
+
+a.home-button:hover {
+    background-color: #0056b3;
+    /* 호버 시 홈 버튼 배경색 */
+    transform: scale(1.05);
+    /* 호버 시 홈 버튼 크기 확대 */
+}
+
+/* Image Styles */
+img {
+    display: block;
+    margin: 0 auto;
+    /* 중앙 정렬 */
+    max-width: 100%;
+    /* 반응형 디자인 적용 */
+    height: auto;
+    /* 비율 유지 */
+}
+
+/* Header styling */
+header {
+    background-color: #f8f9fa;
+    padding: 1em;
+    border-bottom: 1px solid #dee2e6;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+header nav {
+    margin-top: 0.5em;
+}
+
+header nav a {
+    text-decoration: none;
+    color: #007bff;
+    margin-right: 15px;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main content styling */
+main {
+    padding: 1em;
+    text-align: center;
+}
+
+main img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* .menu {
+    display: none;
+}
+
+.top-menu:hover .menu {
+    display: block;
+} */
